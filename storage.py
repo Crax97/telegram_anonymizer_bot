@@ -6,7 +6,7 @@ storage = shelve.open("storage")
 
 def add_admin(user_id):
     storage["BOT_ADMINS"] = (storage.get(
-        "BOT_ADMINS", set({})) | {user_id}) - {config["BOT_MODERATOR"]}
+        "BOT_ADMINS", set({})) | {user_id}) - {config["BOT_MANAGER"]}
 
 
 def remove_admin(user_id):
