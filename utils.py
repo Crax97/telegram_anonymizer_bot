@@ -2,12 +2,12 @@ import storage
 from telegram import ChatMember
 
 
-def admins_only(f, bot):
-    def anonymized(update, context):
+def admins_only(f, bot, *largs):
+    def anonymized(update, context, *largs):
         if storage.is_admin(update.message.from_user.id):
-            f(update, context)
+            f(update, context, *largs)
         else:
-            update.message.reply_text("Sorry, this action is for admins only")
+            update.message.reply_text(storage.get_string("USER_NOT_ADMIN"))
     return anonymized
 
 
