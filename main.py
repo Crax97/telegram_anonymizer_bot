@@ -31,12 +31,16 @@ def make_ban_keyboard(id):
     return InlineKeyboardMarkup(button)
 
 
-def strip_message_cmd(cmd, text):
-    return text.lstrip("/" + cmd).strip()
+def strip_message_cmd(text):
+    pos = text.find(' ')
+    if pos == -1:
+        return ''
+    else:
+        return text[pos:].strip()
 
 
 def send_message(update, ctx):
-    message_no_cmd = strip_message_cmd(anonymize_cmd, update.message.text)
+    message_no_cmd = strip_message_cmd(update.message.text)
     if len(message_no_cmd) == 0:
         update.message.reply_text(storage.get_string("EMPTY_MSG"))
     else:
@@ -191,7 +195,7 @@ def setcurrentgroup(update, context):
 
 
 def setlocale(update, context):
-    locale = strip_message_cmd("setlocale", update.message.text)
+    locale = strip_message_cmd(update.message.text)
     if storage.set_locale(locale):
         update.message.reply_text(storage.get_string("LOCALE_SET"))
     else:
