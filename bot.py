@@ -2,9 +2,8 @@ import storage
 import utils
 import logging
 
-from telegram import InlineKeyboardButton, InlineKeyboardMarkup, InlineQueryResultArticle, ForceReply, ReplyKeyboardMarkup, \
-    InputTextMessageContent, ParseMode, TelegramError, Chat
-from telegram.ext import Updater, CallbackQueryHandler, CommandHandler, InlineQueryHandler
+from telegram import ParseMode, Chat
+from telegram.ext import Updater, CallbackQueryHandler, CommandHandler
 
 updater = Updater(storage.get_bot_token(), use_context=True)
 bot = updater.bot
