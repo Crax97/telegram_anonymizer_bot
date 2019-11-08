@@ -154,8 +154,13 @@ def error(update, context):
 
 
 def setup():
+    # Non-admins
     updater.dispatcher.add_handler(
         CommandHandler("send", anonymize))
+    updater.dispatcher.add_handler(CommandHandler(
+        "listadmins", listadmins))
+
+    # Admins-only commands
     updater.dispatcher.add_handler(CommandHandler(
         "setgroup", utils.admins_only(setcurrentgroup, bot)))
     updater.dispatcher.add_handler(
@@ -164,8 +169,6 @@ def setup():
         "makeadmin", utils.admins_only(makeadmin, bot)))
     updater.dispatcher.add_handler(CommandHandler(
         "removeadmin", utils.admins_only(removeadmin, bot)))
-    updater.dispatcher.add_handler(CommandHandler(
-        "listadmins", utils.admins_only(listadmins, bot)))
     updater.dispatcher.add_handler(CommandHandler(
         "unban", utils.admins_only(unban, bot)))
     updater.dispatcher.add_handler(CommandHandler(
