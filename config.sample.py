@@ -24,6 +24,7 @@ config = {
             "REMOVEADMIN_IS_MANAGER": "Sorry, can't remove the bot manager from the admins",
             "REMOVEADMIN_SUCCESS": "%s is no longer an admin",
             "REMOVEADMIN_USER_NOT_ADMIN": "%s is not an admin at the moment",
+            "REPLY_ID_SAME_AS_BOT": "The bot can't be an admin of himself",
             "LIST_ADMINS_STRING": "List of the current admins:\nBot manager: %s\n%s",
             "SET_GROUP_OK": "Done! This will be the group i'm going to send anonymous messages to",
             "LOCALE_NO_REPLY": "Write a language and i will use it for my messages",

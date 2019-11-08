@@ -42,10 +42,13 @@ def makeadmin(update, ctx):
             storage.get_string("MAKEADMIN_NO_REPLY"))
     else:
         reply_author = reply.from_user.id
-        storage.add_admin(reply_author)
-        username, has_username = utils.get_username(reply_author, bot)
-        message.reply_text(storage.get_string("ADMIN_GREETING") %
-                           ("@" + username if has_username else username))
+        if reply_author != bot.id:
+            storage.add_admin(reply_author)
+            username, has_username = utils.get_username(reply_author, bot)
+            message.reply_text(storage.get_string("ADMIN_GREETING") %
+                               ("@" + username if has_username else username))
+        else:
+            message.reply_text(storage.get_string("REPLY_ID_SAME_AS_BOT"))
 
 
 def removeadmin(update, ctx):
