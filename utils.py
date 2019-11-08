@@ -63,16 +63,19 @@ def get_username(user_id, bot):
 
 
 def make_report_keyboard(id, text):
+    data = "report,%d" % (id)
     keyboard = [[
         InlineKeyboardButton(storage.get_string("REPORT"),
-                             callback_data="report,%d,%s" % (id, text))
+                             callback_data=data)
     ]]
     return InlineKeyboardMarkup(keyboard)
 
 
 def make_ban_keyboard(id):
+    data = "ban,%s" % id
+    print(data)
     button = [[
         InlineKeyboardButton(storage.get_string(
-            "BAN"), callback_data="ban,%s" % id)
+            "BAN"), callback_data=data)
     ]]
     return InlineKeyboardMarkup(button)

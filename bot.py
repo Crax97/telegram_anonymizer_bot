@@ -13,9 +13,9 @@ def listadmins(update, ctx):
     message = update.message
     reply = storage.get_string("LIST_ADMINS_STRING")
     admins = ""
-    founder_name, has_name = utils.get_username(storage.get_bot_manager())
+    founder_name, has_name = utils.get_username(storage.get_bot_manager(), bot)
     for admin in storage.get_admin_set():
-        admin_name, has_name = utils.get_username(admin)
+        admin_name, has_name = utils.get_username(admin, bot)
         admins += "\t" + admin_name + "\n"
     message.reply_text(reply % (founder_name, admins))
 
@@ -43,7 +43,7 @@ def makeadmin(update, ctx):
     else:
         reply_author = reply.from_user.id
         storage.add_admin(reply_author)
-        username, has_username = utils.get_username(reply_author)
+        username, has_username = utils.get_username(reply_author, bot)
         message.reply_text(storage.get_string("ADMIN_GREETING") %
                            ("@" + username if has_username else username))
 
@@ -62,7 +62,7 @@ def removeadmin(update, ctx):
                     storage.get_string("REMOVEADMIN_IS_MANAGER"))
             else:
                 storage.remove_admin(reply_author)
-                username, has_username = utils.get_username(reply_author)
+                username, has_username = utils.get_username(reply_author, bot)
                 message.reply_text(storage.get_string("REMOVEADMIN_SUCCESS") % (
                     "@" + username if has_username else username))
         else:
@@ -97,9 +97,10 @@ def anonymize(update, ctx):
 
 
 def report_handler(update, ctx, args, query):
+    print(query)
     keyboard = utils.make_ban_keyboard(args[1])
     utils.send_to_admins(
-        storage.get_string("REPORTED_ADMIN_MSG") % args[2],
+        storage.get_string("REPORTED_ADMIN_MSG") % query.message.text,
         bot,
         reply_markup=keyboard,
         parse_mode=ParseMode.MARKDOWN
