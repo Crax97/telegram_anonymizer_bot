@@ -30,6 +30,7 @@ config = {
             "LOCALE_NO_REPLY": "Write a language and i will use it for my messages",
             "LOCALE_NOT_PRESENT": "Sorry, that locale isn't in my configuration! Ask the admins to add it in my configuration file",
             "LOCALE_SET": "Language changed to english",
+            "ONLY_TEXT": "Sorry, to avoid sending NSFW content only text is allowed",
         },
     }
 }

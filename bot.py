@@ -2,8 +2,8 @@ import storage
 import utils
 import logging
 
-from telegram import ParseMode, Chat
-from telegram.ext import Updater, CallbackQueryHandler, CommandHandler
+from telegram import ParseMode, Chat, Message
+from telegram.ext import Updater, CallbackQueryHandler, CommandHandler, MessageHandler, Filters
 
 updater = Updater(storage.get_bot_token(), use_context=True)
 bot = updater.bot
@@ -72,16 +72,14 @@ def removeadmin(update, ctx):
             message.reply_text(storage.get_string(
                 "REMOVEADMIN_USER_NOT_ADMIN"))
 
-
 def send_message(update, ctx):
     message_text = utils.format_message(update.message)
-    message_no_cmd = utils.strip_message_cmd(message_text)
-    if len(message_no_cmd) == 0:
+    if len(message_text) == 0:
         update.message.reply_text(storage.get_string("EMPTY_MSG"))
     else:
         try:
-            bot.send_message(storage.get_target_chat(), message_no_cmd, reply_markup=utils.make_report_keyboard(
-                update.message.from_user.id, message_no_cmd), parse_mode=ParseMode.MARKDOWN)
+            bot.send_message(storage.get_target_chat(), message_text, reply_markup=utils.make_report_keyboard(
+                update.message.from_user.id, message_text), parse_mode=ParseMode.MARKDOWN)
             update.message.reply_text(storage.get_string("MSG_SENT"))
         except Exception as e:
             print(e)
@@ -97,11 +95,13 @@ def anonymize(update, ctx):
         update.message.reply_text(
             storage.get_string("GROUP_MEMS_ONLY"))
     else:
-        send_message(update, ctx)
+        if not update.message.text:
+            update.message.reply_text(storage.get_string("ONLY_TEXT"))
+        else:
+            send_message(update, ctx)
 
 
 def report_handler(update, ctx, args, query):
-    print(query)
     keyboard = utils.make_ban_keyboard(args[1])
     utils.send_to_admins(
         storage.get_string("REPORTED_ADMIN_MSG") % query.message.text,
@@ -159,8 +159,7 @@ def error(update, context):
 
 def setup():
     # Non-admins
-    updater.dispatcher.add_handler(
-        CommandHandler("send", anonymize))
+    updater.dispatcher.add_handler(MessageHandler(Filters.private & (~Filters.command), anonymize))
     updater.dispatcher.add_handler(CommandHandler(
         "listadmins", listadmins))
 
