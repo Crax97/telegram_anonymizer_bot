@@ -15,7 +15,7 @@ config = {
             "UNBAN_NO_REPLY": "Reply to a message and the author will be removed from the banned users",
             "UNBAN_OK": "Ok, user unbanned",
             "GROUP_MEMS_ONLY": "Sorry, this command is restricted to group members only",
-            "REPORTED_ADMIN_MSG": "*$reporter reported this message by $username:*\n\n$message",
+            "REPORTED_ADMIN_MSG": "<b>$reporter reported this message by $username:</b>\n\n$message",
             "REPORTED_REPLY": "Message reported, thank you",
             "USER_ALREADY_BANNED": "This user has been already banned",
             "USER_IS_ADMIN": "Sorry, this user is one of the bot admins and can't be banned",

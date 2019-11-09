@@ -1,4 +1,5 @@
 import storage
+from string import Template
 from telegram import ChatMember, TelegramError, InlineKeyboardButton, InlineKeyboardMarkup, TelegramError, MessageEntity
 import logging
 
@@ -59,8 +60,8 @@ def get_username(user_id, bot):
             return "@" + user.username
         else:
             user_name = user.first_name + (" " + user.last_name if user.last_name else "")
-            telegram_markdown = f"[{user_name}](tg://user?id={user_id})"
-            return telegram_markdown
+            telegram_html = f"<a href='tg://user?id={user_id}'>{user_name}</a>"
+            return telegram_html
     except TelegramError as e:
         logging.error(
             "Error trying to get the chat member with id " + user_id + ": " + e.message)
@@ -75,10 +76,20 @@ def make_report_keyboard(id, text):
     ]]
     return InlineKeyboardMarkup(keyboard)
 
+def strip_unwanted_chars(string):
+    char_map = {
+        '&': "&amp;",
+        '<': "&lt;",
+        '>': "&gt;",
+    }
+    for char in char_map:
+        string = string.replace(char, char_map[char])
+    return string
+
 def get_formatted_entities(message):
     """
     This function gets each printable entity in the message, 
-    formats it according to Markdown and stores it into a list with it's
+    formats it according to HTML markup and stores it into a list with it's
     beginning and end in the original message
     es.
     "this is a bold text", where bold should be printed in bold
@@ -86,11 +97,11 @@ def get_formatted_entities(message):
     """
     formatted_entities = []
     entity_map = {
-        MessageEntity.BOLD : ('*', '*'),
-        MessageEntity.ITALIC : ('_', '_'),
-        MessageEntity.TEXT_LINK : ('[', ']'),
-        MessageEntity.CODE : ('`', '`'),
-        MessageEntity.PRE : ('```', '```'),
+        MessageEntity.BOLD : ('<b>', '</b>'),
+        MessageEntity.ITALIC : ('<i>', '</i>'),
+        MessageEntity.TEXT_LINK : ('<a href="$user_link">', '</a>'),
+        MessageEntity.CODE : ('<code>', '</code>'),
+        MessageEntity.PRE : ('<pre>', '</pre>'),
     }
     entities = message.parse_entities()
     filtered_types = (MessageEntity.BOT_COMMAND, MessageEntity.CASHTAG, MessageEntity.EMAIL, MessageEntity.HASHTAG, MessageEntity.MENTION, MessageEntity.PHONE_NUMBER, MessageEntity.TEXT_MENTION)
@@ -99,9 +110,10 @@ def get_formatted_entities(message):
         end = begin + key.length
         formats = entity_map.get(key.type, ("", ""))
         entity_text = entities[key]
-        formatted_entity_text = formats[0] + entity_text + formats[1]
+        formatted_entity_text = formats[0] + strip_unwanted_chars(entity_text) + formats[1]
         if key.type == MessageEntity.TEXT_LINK:
-            formatted_entity_text += "(" + key.url + ")"
+            temp = Template(formatted_entity_text)
+            formatted_entity_text = temp.substitute(user_link = key.url)
         formatted_entities += [(begin, end, formatted_entity_text)]
     formatted_entities = sorted(formatted_entities, key= lambda ent: ent[0])
     return formatted_entities
@@ -117,9 +129,9 @@ def replace_formatted(original_text, formatted_entities):
     formatted_message = ""
     for ent in formatted_entities:
         cur_end = ent[0]
-        formatted_message += original_text[cur_begin: cur_end] + ent[2]
+        formatted_message += strip_unwanted_chars(original_text[cur_begin: cur_end]) + ent[2]
         cur_begin = ent[1]
-    formatted_message += original_text[cur_begin: ]
+    formatted_message += strip_unwanted_chars(original_text[cur_begin: ])
     return formatted_message
 
 

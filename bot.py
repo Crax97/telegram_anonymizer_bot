@@ -25,7 +25,7 @@ def listadmins(update, ctx):
         admin_name = utils.get_username(admin, bot)
         admins += "\t" + admin_name + "\n"
     template = Template(reply)
-    message.reply_text(template.safe_substitute(admins=admins), parse_mode=ParseMode.MARKDOWN)
+    message.reply_text(template.safe_substitute(admins=admins), parse_mode=ParseMode.HTML)
 
 
 def setcurrentgroup(update, context):
@@ -55,7 +55,7 @@ def makeadmin(update, ctx):
             username = utils.get_username(reply_author, bot)
             template = Template(storage.get_string("ADMIN_GREETING"))
             message.reply_text(template.safe_substitute(
-                               admin=username), parse_mode=ParseMode.MARKDOWN)
+                               admin=username), parse_mode=ParseMode.HTML)
         else:
             message.reply_text(storage.get_string("REPLY_ID_SAME_AS_BOT"))
 
@@ -77,10 +77,10 @@ def removeadmin(update, ctx):
                 storage.remove_admin(reply_author)
                 string_template = Template(storage.get_string("REMOVEADMIN_SUCCESS"))
                 message.reply_text(string_template.safe_substitute (
-                    username = username), parse_mode=ParseMode.MARKDOWN)
+                    username = username), parse_mode=ParseMode.HTML)
         else:
             string_template = Template(storage.get_string("REMOVEADMIN_USER_NOT_ADMIN"))
-            message.reply_text(string_template.safe_substitute(username = username), parse_mode=ParseMode.MARKDOWN)
+            message.reply_text(string_template.safe_substitute(username = username), parse_mode=ParseMode.HTML)
 
 def send_message(update, ctx):
     message_text = utils.format_message(update.message)
@@ -89,12 +89,12 @@ def send_message(update, ctx):
     else:
         try:
             bot.send_message(storage.get_target_chat(), message_text, reply_markup=utils.make_report_keyboard(
-                update.message.from_user.id, message_text), parse_mode=ParseMode.MARKDOWN)
+                update.message.from_user.id, message_text), parse_mode=ParseMode.HTML)
             update.message.reply_text(storage.get_string("MSG_SENT"))
         except Exception as e:
             template = Template(storage.get_string("CANT_SEND"))
             update.message.reply_text(
-                template.format(message=e.message))
+                template.safe_substitute(message=e.message))
 
 
 def anonymize(update, ctx):
@@ -126,7 +126,7 @@ def report_handler(update, ctx, args, query):
         template.safe_substitute(message=query.message.text, username=user_handle, reporter=reporter_handle),
         bot,
         reply_markup=keyboard,
-        parse_mode=ParseMode.MARKDOWN
+        parse_mode=ParseMode.HTML
     )
     query.edit_message_text(text=storage.get_string("REPORTED_REPLY"))
 
