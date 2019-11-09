@@ -74,13 +74,14 @@ def removeadmin(update, ctx):
 
 
 def send_message(update, ctx):
-    message_no_cmd = utils.strip_message_cmd(update.message.text)
+    message_text = utils.format_message(update.message)
+    message_no_cmd = utils.strip_message_cmd(message_text)
     if len(message_no_cmd) == 0:
         update.message.reply_text(storage.get_string("EMPTY_MSG"))
     else:
         try:
             bot.send_message(storage.get_target_chat(), message_no_cmd, reply_markup=utils.make_report_keyboard(
-                update.message.from_user.id, message_no_cmd))
+                update.message.from_user.id, message_no_cmd), parse_mode=ParseMode.MARKDOWN)
             update.message.reply_text(storage.get_string("MSG_SENT"))
         except Exception as e:
             print(e)
