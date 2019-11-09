@@ -127,7 +127,6 @@ def format_message(message):
 
 def make_ban_keyboard(id):
     data = "ban,%s" % id
-    print(data)
     button = [[
         InlineKeyboardButton(storage.get_string(
             "BAN"), callback_data=data)
