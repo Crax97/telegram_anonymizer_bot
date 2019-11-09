@@ -68,18 +68,19 @@ def removeadmin(update, ctx):
             storage.get_string("REMOVEADMIN_NO_REPLY"))
     else:
         reply_author = reply.from_user.id
+        username, has_username = utils.get_username(reply_author, bot)
         if storage.is_admin(reply_author):
             if storage.is_manager(reply_author):
                 message.reply_text(
                     storage.get_string("REMOVEADMIN_IS_MANAGER"))
             else:
                 storage.remove_admin(reply_author)
-                username, has_username = utils.get_username(reply_author, bot)
                 string_template = Template(storage.get_string("REMOVEADMIN_SUCCESS"))
                 message.reply_text(string_template.safe_substitute (
                     username = "@" + username if has_username else username))
         else:
-            message.reply_text(storage.get_string("REMOVEADMIN_USER_NOT_ADMIN"))
+            string_template = Template(storage.get_string("REMOVEADMIN_USER_NOT_ADMIN"))
+            message.reply_text(string_template.safe_substitute(username = username))
 
 def send_message(update, ctx):
     message_text = utils.format_message(update.message)
