@@ -71,6 +71,14 @@ def make_report_keyboard(id, text):
     return InlineKeyboardMarkup(keyboard)
 
 def get_formatted_entities(message):
+    """
+    This function gets each printable entity in the message, 
+    formats it according to Markdown and stores it into a list with it's
+    beginning and end in the original message
+    es.
+    "this is a bold text", where bold should be printed in bold
+    the list is going to contain one tuple: (11, 14, **bold**)
+    """
     formatted_entities = []
     entity_map = {
         MessageEntity.BOLD : ('*', '*'),
@@ -94,6 +102,11 @@ def get_formatted_entities(message):
     return formatted_entities
 
 def replace_formatted(original_text, formatted_entities):
+    """
+    This function concatenates each entity with the
+    previous normal text, cur_begin is the begin of the latest normal text and cur_end
+    is the begin of the next formatted entity
+    """
     cur_begin = 0
     cur_end = 0
     formatted_message = ""
