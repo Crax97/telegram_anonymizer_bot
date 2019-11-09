@@ -3,6 +3,8 @@ config = {
     "BOT_MANAGER": 12345,
     "TRANSLATIONS": {
         "en": {
+            "BOT_GREETING_GROUP": "Hi! Thanks for adding me to this group chat, to send anoymous messages simply send me some text in private and i will resend it here",
+            "BOT_GREETING_USER": "Hi! Just send me some messages and i will resend (not forward) them in the group",
             "REPORT": "Report this message",
             "BAN": "Ban this user",
             "USER_NOT_ADMIN": "Sorry, you must be an admin to perform this action",

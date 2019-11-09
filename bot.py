@@ -8,6 +8,12 @@ from telegram.ext import Updater, CallbackQueryHandler, CommandHandler, MessageH
 updater = Updater(storage.get_bot_token(), use_context=True)
 bot = updater.bot
 
+def start(update, ctx):
+    chat = update.effective_chat
+    if chat.type == Chat.GROUP:
+        update.message.reply_text(storage.get_string("BOT_GREETING_GROUP"))
+    else:
+        update.message.reply_text(storage.get_string("BOT_GREETING_USER"))
 
 def listadmins(update, ctx):
     message = update.message
@@ -84,7 +90,7 @@ def send_message(update, ctx):
         except Exception as e:
             print(e)
             update.message.reply_text(
-                storage.get_string("CANT_SEND"))
+                storage.get_string("CANT_SEND") % e.message)
 
 
 def anonymize(update, ctx):
@@ -162,6 +168,8 @@ def setup():
     updater.dispatcher.add_handler(MessageHandler(Filters.private & (~Filters.command), anonymize))
     updater.dispatcher.add_handler(CommandHandler(
         "listadmins", listadmins))
+    updater.dispatcher.add_handler(CommandHandler(
+        "start", start))
 
     # Admins-only commands
     updater.dispatcher.add_handler(CommandHandler(
