@@ -55,11 +55,16 @@ def get_username(user_id, bot):
     try:
         chat = bot.get_chat_member(storage.get_target_chat(), user_id)
         user = chat.user
-        return (user.username, True) if user.username else (user.first_name + " " + user.last_name, False)
+        if user.username != None:
+            return "@" + user.username
+        else:
+            user_name = user.first_name + (" " + user.last_name if user.last_name else "")
+            telegram_markdown = f"[{user_name}](tg://user?id={user_id})"
+            return telegram_markdown
     except TelegramError as e:
         logging.error(
             "Error trying to get the chat member with id " + user_id + ": " + e.message)
-    return "", False
+    return "UsernameNotFound"
 
 
 def make_report_keyboard(id, text):

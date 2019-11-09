@@ -20,12 +20,12 @@ def listadmins(update, ctx):
     message = update.message
     reply = storage.get_string("LIST_ADMINS_STRING")
     admins = ""
-    founder_name, has_name = utils.get_username(storage.get_bot_manager(), bot)
+    founder_name= utils.get_username(storage.get_bot_manager(), bot)
     for admin in storage.get_admin_set():
-        admin_name, has_name = utils.get_username(admin, bot)
+        admin_name = utils.get_username(admin, bot)
         admins += "\t" + admin_name + "\n"
     template = Template(reply)
-    message.reply_text(template.safe_substitute(admins=admins))
+    message.reply_text(template.safe_substitute(admins=admins), parse_mode=ParseMode.MARKDOWN)
 
 
 def setcurrentgroup(update, context):
@@ -52,10 +52,10 @@ def makeadmin(update, ctx):
         reply_author = reply.from_user.id
         if reply_author != bot.id:
             storage.add_admin(reply_author)
-            username, has_username = utils.get_username(reply_author, bot)
+            username = utils.get_username(reply_author, bot)
             template = Template(storage.get_string("ADMIN_GREETING"))
             message.reply_text(template.safe_substitute(
-                               admin="@" + username if has_username else username))
+                               admin=username), parse_mode=ParseMode.MARKDOWN)
         else:
             message.reply_text(storage.get_string("REPLY_ID_SAME_AS_BOT"))
 
@@ -68,7 +68,7 @@ def removeadmin(update, ctx):
             storage.get_string("REMOVEADMIN_NO_REPLY"))
     else:
         reply_author = reply.from_user.id
-        username, has_username = utils.get_username(reply_author, bot)
+        username = utils.get_username(reply_author, bot)
         if storage.is_admin(reply_author):
             if storage.is_manager(reply_author):
                 message.reply_text(
@@ -77,10 +77,10 @@ def removeadmin(update, ctx):
                 storage.remove_admin(reply_author)
                 string_template = Template(storage.get_string("REMOVEADMIN_SUCCESS"))
                 message.reply_text(string_template.safe_substitute (
-                    username = "@" + username if has_username else username))
+                    username = username), parse_mode=ParseMode.MARKDOWN)
         else:
             string_template = Template(storage.get_string("REMOVEADMIN_USER_NOT_ADMIN"))
-            message.reply_text(string_template.safe_substitute(username = username))
+            message.reply_text(string_template.safe_substitute(username = username), parse_mode=ParseMode.MARKDOWN)
 
 def send_message(update, ctx):
     message_text = utils.format_message(update.message)
@@ -111,11 +111,8 @@ def anonymize(update, ctx):
             send_message(update, ctx)
 
 def get_reporter_and_user_handles(rep_id, author_id):
-    author = utils.get_username(author_id, bot)
-    reporter = utils.get_username(rep_id, bot)
-
-    username = "@" + author[0] if author[1] else author[0]
-    reporter_name = "@" + reporter[0] if reporter[1] else reporter[0]
+    username = utils.get_username(author_id, bot)
+    reporter_name = utils.get_username(rep_id, bot)
 
     return (reporter_name, username)
 
