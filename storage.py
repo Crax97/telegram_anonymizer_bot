@@ -1,8 +1,8 @@
 import shelve
 from config import config
+import utils
 
 storage = shelve.open("storage")
-
 
 def add_admin(user_id):
     storage["BOT_ADMINS"] = (storage.get(
@@ -55,8 +55,34 @@ def get_bot_token():
 
 def get_string(string):
     locale = storage.get("LOCALE", "en")
-    return config["TRANSLATIONS"][locale].get(string, string)
+    string = config["TRANSLATIONS"][locale].get(string, string)
+    return string
 
+
+def get_warns_for_user(user_id):
+    return storage.get("WARNS", {}).get(user_id, set({}))
+
+
+def get_max_warns():
+    return config["MAX_WARNS"]
+
+
+def add_warn_to_user(user_id, message_id):
+    ## TODO: Ew
+    warns_dict = storage.get(
+        "WARNS", {})
+    warns_updated_for_user = get_warns_for_user(user_id) | {message_id}
+    warns_dict[user_id] = warns_updated_for_user
+    storage["WARNS"] = warns_dict
+    if len(warns_updated_for_user) == get_max_warns():
+        ban_user(user_id)
+    return len(warns_updated_for_user)
+
+def clear_warnings(user_id):
+    warns_dict = storage.get(
+        "WARNS", {})
+    warns_dict[user_id] = set({})
+    storage["WARNS"] = warns_dict
 
 def set_locale(newlocale):
     if newlocale in config["TRANSLATIONS"]:
