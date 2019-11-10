@@ -4,8 +4,10 @@ from telegram import ChatMember, TelegramError, InlineKeyboardButton, InlineKeyb
 import logging
 import time
 
+
 def get_timestamp():
     return int(time.time())
+
 
 def admins_only(f, bot, *largs):
     def anonymized(update, context, *largs):
@@ -105,60 +107,6 @@ def strip_unwanted_chars(string):
     return string
 
 
-def get_formatted_entities(message):
-    """
-    This function gets each printable entity in the message, 
-    formats it according to HTML markup and stores it into a list with it's
-    beginning and end in the original message
-    es.
-    "this is a bold text", where bold should be printed in bold
-    the list is going to contain one tuple: (11, 14, **bold**)
-    """
-    formatted_entities = []
-    entity_map = {
-        MessageEntity.BOLD: ('<b>', '</b>'),
-        MessageEntity.ITALIC: ('<i>', '</i>'),
-        MessageEntity.TEXT_LINK: ('<a href="$user_link">', '</a>'),
-        MessageEntity.CODE: ('<code>', '</code>'),
-        MessageEntity.PRE: ('<pre>', '</pre>'),
-    }
-    entities = message.parse_entities()
-    filtered_types = (MessageEntity.BOT_COMMAND, MessageEntity.CASHTAG, MessageEntity.EMAIL,
-                      MessageEntity.HASHTAG, MessageEntity.MENTION, MessageEntity.PHONE_NUMBER, MessageEntity.TEXT_MENTION)
-    for key in filter(lambda ent: ent.type not in filtered_types, entities):
-        begin = key.offset
-        end = begin + key.length
-        formats = entity_map.get(key.type, ("", ""))
-        entity_text = entities[key]
-        formatted_entity_text = formats[0] + \
-            strip_unwanted_chars(entity_text) + formats[1]
-        if key.type == MessageEntity.TEXT_LINK:
-            temp = Template(formatted_entity_text)
-            formatted_entity_text = temp.substitute(user_link=key.url)
-        formatted_entities += [(begin, end, formatted_entity_text)]
-    formatted_entities = sorted(formatted_entities, key=lambda ent: ent[0])
-    return formatted_entities
-
-
-def replace_formatted(original_text, formatted_entities):
-    """
-    This function concatenates each entity with the
-    previous normal text, cur_begin is the begin of the latest normal text and cur_end
-    is the begin of the next formatted entity
-    """
-    cur_begin = 0
-    cur_end = 0
-    formatted_message = ""
-    for ent in formatted_entities:
-        cur_end = ent[0]
-        formatted_message += strip_unwanted_chars(
-            original_text[cur_begin: cur_end]) + ent[2]
-        cur_begin = ent[1]
-    formatted_message += strip_unwanted_chars(original_text[cur_begin:])
-    return formatted_message
-
-
 def format_message(message):
-    original_text = message.text
-    formatted_entities = get_formatted_entities(message)
-    return replace_formatted(original_text, formatted_entities)
+    # Read the fucking API documentation next time, Crax
+    return message.text_html
