@@ -55,7 +55,7 @@ def get_bot_token():
 
 def get_string(string):
     locale = storage.get("LOCALE", "en")
-    string = config["TRANSLATIONS"][locale].get(string, string)
+    string = config["TRANSLATIONS"][locale].get(string, "Localization string not found: " + string)
     return string
 
 

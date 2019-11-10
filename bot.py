@@ -172,7 +172,7 @@ def ban_user(update, ctx, args, query):
 def warn_user(update, ctx, args, query):
     user_id = int(args[1])
     msg_id = int(args[2])
-    should_hide_msg = bool(args[3])
+    should_hide_msg = bool(int(args[3]))
     warns = storage.get_warns_for_user(user_id)
     if user_id in storage.get_admin_set():
             query.edit_message_text(
