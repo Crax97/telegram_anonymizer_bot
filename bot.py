@@ -25,9 +25,9 @@ def listadmins(update, ctx):
     message = update.message
     reply = storage.get_string("LIST_ADMINS_STRING")
     admins = ""
-    founder_name = utils.get_username(storage.get_bot_manager(), bot)
     for admin in storage.get_admin_set():
         admin_name = utils.get_username(admin, bot)
+        print(admin_name)
         admins += "\t" + admin_name + "\n"
     template = Template(reply)
     message.reply_text(template.safe_substitute(
@@ -214,8 +214,9 @@ def get_reason_and_warn(update, ctx):
     else:
         warn_count = storage.add_warn_to_user(user_id, timestamp)
         template = Template(storage.get_string("WARN_WARNED"))
+        username = utils.get_username(user_id, bot)
         update.message.reply_text(
-            template.safe_substitute(warns = warn_count, max = storage.get_max_warns()))
+            template.safe_substitute(username=username, warns=warn_count, max=storage.get_max_warns()))
         if warn_count == storage.get_max_warns():
             send_to_user_or_group(
                 user_id, storage.get_string("WARN_BANNED"))
